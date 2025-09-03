@@ -16,13 +16,19 @@ node index.js
 
 # Performance
 
+<h4> Without checking against a-z round 
 Tries: 100
 Average count: 6.53
 Error: 7
 
+<h4> With checking against a-z round
+Tries: 100
+Average count: 7.1
+Error: 0
+
 ## To-do
 
-1. Improve error guessing (e.g. civic , i is "correct" in position from first a-z guessing, leading to failure since i will not be used later)
+1. <s>Improve error guessing (e.g. civic , i is "correct" in position from first a-z guessing, leading to failure since i will not be used later)</s>
 2. Changing the a-z guessing mechanism may improve the performance, e.g. vowels words will be guessed first
 
 ## Author

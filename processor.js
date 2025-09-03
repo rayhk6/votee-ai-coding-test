@@ -7,7 +7,9 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // set the result variable
 let result = ["", "", "", "", ""];
 let guess = ["", "", "", "", ""];
+
 let possible_chars = [];
+let duplicated_chars = []; //for handling a-z guessing result
 
 // find possible words from wordlist based on result and possible_chars
 const FindPossibilities = () => {
@@ -18,7 +20,7 @@ const FindPossibilities = () => {
   );
 };
 
-const Validation = (response) => {
+const Validation = (response, initial = false) => {
   //check response one by one
   let pass = true;
   for (let index = 0; index < response.length; index++) {
@@ -27,6 +29,9 @@ const Validation = (response) => {
       const tmp = result.slice();
       tmp[index] = element.guess;
       result = tmp.slice();
+      if (!duplicated_chars.includes(element.guess) && initial) {
+        duplicated_chars.push(element.guess);
+      }
     } else if (element.result === "present") {
       //if present, add to possible_chars if not already present
       if (!possible_chars.includes(element.guess)) {
@@ -78,7 +83,7 @@ export const GuessWordleLoop = async (seed) => {
         console.log("Guessing word: ", guess.join("").replace(",", ""));
         run_count++;
         const response = await fetch_data(guess, seed);
-        Validation(response);
+        Validation(response, true);
 
         //avoid rate limit
         await sleep(1500);
@@ -89,41 +94,43 @@ export const GuessWordleLoop = async (seed) => {
       result,
       ` Possible chars: ${possible_chars}`
     );
+
+    //check existing result against wordlist
+    const possibilities = FindPossibilities();
+    if (possibilities.length === 1) {
+      //found exact match
+      guess = possibilities[0].split("");
+      console.log("Found exact match: ", guess);
+      //check result
+      const checking = await fetch_data(guess, seed);
+
+      if (Validation(checking) === true) {
+        //correct guess
+        return run_count + 1;
+      }
+      //continue if not correct (some vocabularies may be missing from the list)
+    }
+
     //check if all elements of result are filled
     for (let index = 0; index < possible_chars.length; index++) {
       const element = possible_chars[index];
+      guess = result.slice(); //reset guess to result
+
       //if the index is the last element or the only element, fill all empty characters with that character
       if (index.length === 1 || index === possible_chars.length - 1) {
         for (let j = 0; j < 5; j++) {
           if (result[j] === "") {
-            result[j] = element;
+            guess[j] = element;
           }
         }
         break;
       }
-
-      guess = result.slice(); //reset guess to result
 
       // fill the empty characters with possible_chars
       for (let j = 0; j < 5; j++) {
         if (result[j] === "") {
           guess[j] = element;
         }
-      }
-
-      //check existing result against wordlist
-      const possibilities = FindPossibilities();
-      if (possibilities.length === 1) {
-        //found exact match
-        result = possibilities[0].split("");
-        console.log("Found exact match: ", result);
-        //check result
-        const checking = await fetch_data(result, seed);
-        if (Validation(checking)) {
-          //correct guess
-          return run_count + 1;
-        }
-        //continue if not correct (some vocabularies may be missing from the list)
       }
 
       console.log(
@@ -136,7 +143,7 @@ export const GuessWordleLoop = async (seed) => {
       const checking = Validation(response);
       if (checking === true) {
         //all characters are correct
-        break;
+        return run_count;
       }
 
       //avoid rate limit
@@ -145,7 +152,7 @@ export const GuessWordleLoop = async (seed) => {
 
     //final check
     run_count++;
-    const final_check = await fetch_data(result, seed);
+    const final_check = await fetch_data(guess, seed);
     const final_checking = Validation(final_check);
     if (final_checking === true) {
       console.log("Final validation passed");
@@ -156,6 +163,29 @@ export const GuessWordleLoop = async (seed) => {
       );
       console.log("=====================================");
     } else {
+      // exceptional cases handling, e.g. civic with correct i position in a-z guessing etc.
+      // check duplicated_chars
+      for (let index = 0; index < duplicated_chars.length; index++) {
+        const element = duplicated_chars[index];
+        for (let j = 0; j < 5; j++) {
+          if (result[j] === "") {
+            guess[j] = element;
+          }
+        }
+        const response = await fetch_data(guess, seed);
+        const checking = Validation(response);
+        if (checking === true) {
+          //all characters are correct
+          console.log("Final validation passed with duplicated chars");
+          console.log(
+            "All characters are filled: ",
+            result.join("").replace(",", ""),
+            ` Run ${run_count} times`
+          );
+          console.log("=====================================");
+          return run_count + 1;
+        }
+      }
       throw new Error("Final validation failed");
     }
 
