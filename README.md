@@ -14,6 +14,17 @@ node index.js
 
 1. dotenv https://github.com/motdotla/dotenv
 
+# Performance
+
+Tries: 100
+Average count: 6.53
+Error: 7
+
+## To-do
+
+1. Improve error guessing (e.g. civic , i is "correct" in position from first a-z guessing, leading to failure since i will not be used later)
+2. Changing the a-z guessing mechanism may improve the performance, e.g. vowels words will be guessed first
+
 ## Author
 
 👤 **Ray Wong**
@@ -23,5 +34,9 @@ node index.js
 ## Show your support
 
 Give a ⭐️ if this project helped you!
+
+## References
+
+Ref: https://gist.github.com/dracos/dd0668f281e685bad51479e5acaadb93
 
 ---

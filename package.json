@@ -1,6 +1,8 @@
 {
+  "scripts": {
+    "convert-list": "awk '{print \"\\\"\" $0 \"\\\",\"}' lib/wordlist.txt | sed '1s/^/export const wordlist = [\\n/;$s/,$/\\n];/' > lib/wordlist_array.js"
+  },
   "dependencies": {
-    "cron": "^4.3.3",
     "dotenv": "^17.2.2"
   },
   "type": "module"
