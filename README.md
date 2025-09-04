@@ -33,7 +33,7 @@ Simply run below
 ## To-do
 
 1. <s>Improve error guessing (e.g. civic , i is "correct" in position from first a-z guessing, leading to failure since i will not be used later)</s>
-2. <s>>Changing the a-z guessing mechanism may improve the performance, e.g. vowels words will be guessed first</s
+2. <s>>Changing the a-z guessing mechanism may improve the performance, e.g. vowels words will be guessed first</s>
 3. If there are more than 1 possible combination from dictionary and the count is less than the count of possible characters, the program should try with dictionary combination first.
 
 ## Author
