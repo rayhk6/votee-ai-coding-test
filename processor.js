@@ -1,5 +1,6 @@
 import { fetch_data } from "./lib/fetch.js";
 import { wordlist } from "./lib/wordlist_array.js";
+import { alphabet_array } from "./util/alphabet.js";
 import { sleep } from "./util/sleep.js";
 
 //avoid TLS error for self-signed cert
@@ -58,17 +59,31 @@ export const GuessWordleLoop = async (seed) => {
   let run_count = 0;
   Reset();
   try {
+    let alphabet = alphabet_array.slice();
     // guess the characters by looping a-z
-    for (let i = 0; i < 26; i++) {
-      const char = String.fromCharCode(97 + i); // get the character from ASCII code
+    for (let i = 0; i < 6; i++) {
+      //try vowels first
 
-      for (let j = 0; j < 6; j++) {
-        guess[i % 5] = char;
-      }
+      if (i === 0) {
+        guess = ["a", "e", "i", "o", "u"];
+        //remove elements from alphabet_array
+        alphabet.splice(alphabet.indexOf("a"), 1);
+        alphabet.splice(alphabet.indexOf("e"), 1);
+        alphabet.splice(alphabet.indexOf("i"), 1);
+        alphabet.splice(alphabet.indexOf("o"), 1);
+        alphabet.splice(alphabet.indexOf("u"), 1);
+      } else if (i === 5) {
+        //handle z case
+        const char = alphabet[0];
+        guess = [char, char, char, char, char];
+        alphabet.splice(alphabet.indexOf(char), 1);
+      } else {
+        for (let j = 0; j < 5; j++) {
+          let char = alphabet[0];
+          alphabet.splice(0, 1);
 
-      //handle z case
-      if (i === 25) {
-        guess = ["z", "z", "z", "z", "z"];
+          guess[j] = char;
+        }
       }
 
       //check if elements in possible_chars sum non-empty result = 5, yes -> break the loop
@@ -81,15 +96,14 @@ export const GuessWordleLoop = async (seed) => {
 
       //guess the word by calling the API
       //handle z case as well
-      if ((i > 0 && i % 5 === 4) || i === 25) {
-        console.log("Guessing word: ", guess.join("").replace(",", ""));
-        run_count++;
-        const response = await fetch_data(guess, seed);
-        Validation(response, true);
 
-        //avoid rate limit
-        await sleep(1500);
-      }
+      console.log("Guessing word: ", guess.join("").replace(",", ""));
+      run_count++;
+      const response = await fetch_data(guess, seed);
+      Validation(response, true);
+
+      //avoid rate limit
+      await sleep(1500);
     }
     console.log(
       "Result after first round: ",
@@ -166,6 +180,7 @@ export const GuessWordleLoop = async (seed) => {
         ` Run ${run_count} times`
       );
       console.log("=====================================");
+      return run_count;
     } else {
       // exceptional cases handling, e.g. civic with correct i position in a-z guessing etc.
       // check duplicated_chars
@@ -193,8 +208,6 @@ export const GuessWordleLoop = async (seed) => {
       }
       throw new Error("Final validation failed");
     }
-
-    return run_count;
   } catch (error) {
     console.error(("[guess_wordle_loop] error: ", error));
     throw error;

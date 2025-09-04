@@ -23,9 +23,10 @@ node index.js
 
 # Backtest
 
-| Tries | Avg Guess | Min | Max |
-| :---- | :-------: | :-: | --: |
-| 14855 |   7.53    |  3  |  10 |
+| Logic        | Tries | Avg Guess | Min | Max |
+| :----------- | :---: | :-------: | :-: | --: |
+| Normal       | 14855 |   7.53    |  3  |  10 |
+| Vowels first | 14855 |   7.45    |  3  |  10 |
 
 ## To-do
 
