@@ -9,7 +9,9 @@ const init = async () => {
   let min = 0;
   let max = 0;
 
-  for (let index = 0; index < wordlist.length; index++) {
+  const length = Boolean(process.env.TESTING) === true ? wordlist.length : 100;
+
+  for (let index = 0; index < length; index++) {
     console.log("Run #: ", index + 1);
     total_run++;
     const run = await GuessWordleLoop(index);
@@ -38,3 +40,5 @@ const init = async () => {
   );
 };
 init();
+
+//GetStat();

@@ -64,6 +64,22 @@ export const GuessWordleLoop = async (seed) => {
     for (let i = 0; i < 6; i++) {
       //try vowels first
 
+      //by character appearance frequency
+      if (i === 0) {
+        guess = ["s", "e", "a", "o", "r"];
+      } else if (i === 1) {
+        guess = ["i", "l", "t", "n", "u"];
+      } else if (i === 2) {
+        guess = ["d", "y", "m", "p", "c"];
+      } else if (i === 3) {
+        guess = ["h", "g", "b", "k", "w"];
+      } else if (i === 4) {
+        guess = ["f", "v", "z", "j", "x"];
+      } else if (i === 5) {
+        guess = ["q", "q", "q", "q", "q"];
+      }
+
+      /*vowels first
       if (i === 0) {
         guess = ["a", "e", "i", "o", "u"];
         //remove elements from alphabet_array
@@ -85,6 +101,8 @@ export const GuessWordleLoop = async (seed) => {
           guess[j] = char;
         }
       }
+      vowels first
+      */
 
       //check if elements in possible_chars sum non-empty result = 5, yes -> break the loop
       if (
@@ -212,4 +230,45 @@ export const GuessWordleLoop = async (seed) => {
     console.error(("[guess_wordle_loop] error: ", error));
     throw error;
   }
+};
+
+export const GetStat = () => {
+  //get the word list and check the sum group by all characters. return a list from a to z with count
+  let stat = {};
+  for (let i = 0; i < alphabet_array.length; i++) {
+    stat[alphabet_array[i]] = 0;
+  }
+
+  for (let i = 0; i < wordlist.length; i++) {
+    const word = wordlist[i];
+    let unique_chars = new Set(word.split(""));
+    unique_chars.forEach((char) => {
+      if (stat.hasOwnProperty(char)) {
+        stat[char]++;
+      }
+    });
+  }
+
+  // order by the count descending
+  stat = Object.fromEntries(Object.entries(stat).sort(([, a], [, b]) => b - a));
+  console.log("Character frequency in wordlist (sorted): ", stat);
+  //split the characters into 5 groups
+  let group_size = 5;
+  let groups = [];
+  let current_group = [];
+  let count = 0;
+  for (let char in stat) {
+    current_group.push(char);
+    count++;
+    if (count === group_size) {
+      groups.push(current_group);
+      current_group = [];
+      count = 0;
+    }
+  }
+  if (current_group.length > 0) {
+    groups.push(current_group);
+  }
+  console.log("Character groups: ", groups);
+  return stat;
 };
