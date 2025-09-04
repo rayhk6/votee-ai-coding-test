@@ -16,15 +16,16 @@ node index.js
 
 # Performance
 
-<h4> Without checking against a-z round 
-Tries: 100
-Average count: 6.53
-Error: 7
+| Item                               | Tries | Avg Guess | Error |
+| :--------------------------------- | :---: | :-------: | ----: |
+| Without checking against a-z round |  100  |   6.53    |     7 |
+| With checking against a-z round    |  100  |    7.1    |     0 |
 
-<h4> With checking against a-z round
-Tries: 100
-Average count: 7.1
-Error: 0
+# Backtest
+
+| Tries | Avg Guess | Min | Max |
+| :---- | :-------: | :-: | --: |
+| 14855 |   7.53    |  3  |  10 |
 
 ## To-do
 

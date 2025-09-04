@@ -1,7 +1,7 @@
 import { fetch_data } from "./lib/fetch.js";
 import { wordlist } from "./lib/wordlist_array.js";
+import { sleep } from "./util/sleep.js";
 
-export const sleep = (m) => new Promise((r) => setTimeout(r, m));
 //avoid TLS error for self-signed cert
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // set the result variable
@@ -21,6 +21,7 @@ const FindPossibilities = () => {
 };
 
 const Validation = (response, initial = false) => {
+  console.log(response);
   //check response one by one
   let pass = true;
   for (let index = 0; index < response.length; index++) {
@@ -50,6 +51,7 @@ const Reset = () => {
   result = ["", "", "", "", ""];
   guess = ["", "", "", "", ""];
   possible_chars = [];
+  duplicated_chars = [];
 };
 
 export const GuessWordleLoop = async (seed) => {
@@ -92,7 +94,8 @@ export const GuessWordleLoop = async (seed) => {
     console.log(
       "Result after first round: ",
       result,
-      ` Possible chars: ${possible_chars}`
+      ` Possible chars: ${possible_chars}`,
+      ` Duplicated chars: ${duplicated_chars}`
     );
 
     //check existing result against wordlist
@@ -152,6 +155,7 @@ export const GuessWordleLoop = async (seed) => {
 
     //final check
     run_count++;
+
     const final_check = await fetch_data(guess, seed);
     const final_checking = Validation(final_check);
     if (final_checking === true) {
@@ -165,6 +169,7 @@ export const GuessWordleLoop = async (seed) => {
     } else {
       // exceptional cases handling, e.g. civic with correct i position in a-z guessing etc.
       // check duplicated_chars
+      guess = result.slice();
       for (let index = 0; index < duplicated_chars.length; index++) {
         const element = duplicated_chars[index];
         for (let j = 0; j < 5; j++) {
@@ -192,6 +197,6 @@ export const GuessWordleLoop = async (seed) => {
     return run_count;
   } catch (error) {
     console.error(("[guess_wordle_loop] error: ", error));
-    return null;
+    throw error;
   }
 };

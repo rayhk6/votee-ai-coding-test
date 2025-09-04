@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "backtest": "TESTING=true node index.js",
     "convert-list": "awk '{print \"\\\"\" $0 \"\\\",\"}' lib/wordlist.txt | sed '1s/^/export const wordlist = [\\n/;$s/,$/\\n];/' > lib/wordlist_array.js"
   },
   "dependencies": {
