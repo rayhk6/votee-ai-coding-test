@@ -16,7 +16,7 @@ Simply run below
 
 # Performance
 
-| Item                               | Tries | Avg Guess | Error |
+| Item                               | Words | Avg Guess | Error |
 | :--------------------------------- | :---: | :-------: | ----: |
 | Without checking against a-z round |  100  |   6.53    |     7 |
 | With checking against a-z round    |  100  |    7.1    |     0 |
@@ -26,7 +26,7 @@ Simply run below
 
 # Backtest
 
-| Logic        | Tries | Avg Guess | Min | Max |
+| Logic        | Words | Avg Guess | Min | Max |
 | :----------- | :---: | :-------: | :-: | --: |
 | Normal       | 14855 |   7.53    |  3  |  10 |
 | Vowels first | 14855 |   7.45    |  3  |  10 |
