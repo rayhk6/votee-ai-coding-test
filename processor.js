@@ -13,12 +13,21 @@ let possible_chars = [];
 let duplicated_chars = []; //for handling a-z guessing result
 
 // find possible words from wordlist based on result and possible_chars
-const FindPossibilities = () => {
-  return wordlist.filter(
+const FindPossibilities = (checkQ = false) => {
+  if (checkQ) {
+    possible_chars.push("q");
+  }
+  const words = wordlist.filter(
     (word) =>
       result.every((char, index) => char === "" || word[index] === char) &&
       possible_chars.every((char) => word.includes(char))
   );
+
+  if (checkQ) {
+    // delete q from possible_chars
+    possible_chars.splice(possible_chars.indexOf("q"), 1);
+  }
+  return words;
 };
 
 const Validation = (response, initial = false) => {
@@ -57,12 +66,20 @@ const Reset = () => {
 
 export const GuessWordleLoop = async (seed) => {
   let run_count = 0;
+  let removedQ = false;
   Reset();
   try {
     let alphabet = alphabet_array.slice();
     // guess the characters by looping a-z
     for (let i = 0; i < 6; i++) {
       //try vowels first
+
+      //if no combination from the dictionary with q, skip q
+      if (i === 5 && FindPossibilities(true).length === 0) {
+        console.log("Skip checking q as no combination found in dictionary");
+        removedQ = true;
+        break;
+      }
 
       //by character appearance frequency
       if (i === 0) {
@@ -223,6 +240,10 @@ export const GuessWordleLoop = async (seed) => {
     } else {
       // exceptional cases handling, e.g. civic with correct i position in a-z guessing etc.
       // check duplicated_chars
+      if (removedQ && !duplicated_chars.includes("q")) {
+        duplicated_chars.push("q");
+      }
+
       guess = result.slice();
       for (let index = 0; index < duplicated_chars.length; index++) {
         const element = duplicated_chars[index];
