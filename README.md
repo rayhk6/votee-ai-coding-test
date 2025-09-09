@@ -20,21 +20,24 @@ Simply run below
 | :--------------------------------- | :---: | :-------: | ----: |
 | Without checking against a-z round |  100  |   6.53    |     7 |
 | With checking against a-z round    |  100  |    7.1    |     0 |
-| Final                              |  100  |   6.77    |     0 |
+| To-do #2                           |  100  |   6.77    |     0 |
+| To-do #3                           |  100  |   6.29    |     0 |
 
 # Backtest
 
-| Logic             | Tries | Avg Guess | Min | Max |
-| :---------------- | :---: | :-------: | :-: | --: |
-| Normal            | 14855 |   7.53    |  3  |  10 |
-| Vowels first      | 14855 |   7.45    |  3  |  10 |
-| By char frequency | 14855 |   7.15    |  2  |  10 |
+| Logic        | Tries | Avg Guess | Min | Max |
+| :----------- | :---: | :-------: | :-: | --: |
+| Normal       | 14855 |   7.53    |  3  |  10 |
+| Vowels first | 14855 |   7.45    |  3  |  10 |
+| To-do #2     | 14855 |   7.15    |  2  |  10 |
+| To-do #3     | 14855 |   6.53    |  2  |  10 |
 
 ## To-do
 
 1. <s>Improve error guessing (e.g. civic , i is "correct" in position from first a-z guessing, leading to failure since i will not be used later)</s>
 2. <s>>Changing the a-z guessing mechanism may improve the performance, e.g. vowels words will be guessed first</s>
-3. If there are more than 1 possible combination from dictionary and the count is less than the count of possible characters, the program should try with dictionary combination first.
+3. <s>If there are more than 1 possible combination from dictionary and the count is less than the count of possible characters, the program should try with dictionary combination first.</s>
+4. Only around 500 words (~3.3%) from the word list (14855 words) have z character. Probably can skip checking z from a-z scanning could significantly improve the performance.
 
 ## Author
 

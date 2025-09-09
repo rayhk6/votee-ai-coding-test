@@ -144,45 +144,66 @@ export const GuessWordleLoop = async (seed) => {
         return run_count + 1;
       }
       //continue if not correct (some vocabularies may be missing from the list)
-    }
+    } else if (
+      possibilities.length > 1 &&
+      possibilities.length <= possible_chars.length
+    ) {
+      // try all combinations from possibilities
+      for (let index = 0; index < possibilities.length; index++) {
+        const element = possibilities[index];
+        guess = element.split("");
+        console.log(
+          `Guessing word from possibilities #${index + 1}: `,
+          guess.join("").replace(",", "")
+        );
 
-    //check if all elements of result are filled
-    for (let index = 0; index < possible_chars.length; index++) {
-      const element = possible_chars[index];
-      guess = result.slice(); //reset guess to result
+        run_count++;
+        const response = await fetch_data(guess, seed);
+        const checking = Validation(response);
+        if (checking === true) {
+          //all characters are correct
+          return run_count;
+        }
+      }
+    } else {
+      //check if all elements of result are filled
+      for (let index = 0; index < possible_chars.length; index++) {
+        const element = possible_chars[index];
+        guess = result.slice(); //reset guess to result
 
-      //if the index is the last element or the only element, fill all empty characters with that character
-      if (index.length === 1 || index === possible_chars.length - 1) {
+        //if the index is the last element or the only element, fill all empty characters with that character
+        if (index.length === 1 || index === possible_chars.length - 1) {
+          for (let j = 0; j < 5; j++) {
+            if (result[j] === "") {
+              guess[j] = element;
+            }
+          }
+          break;
+        }
+
+        // fill the empty characters with possible_chars
         for (let j = 0; j < 5; j++) {
           if (result[j] === "") {
             guess[j] = element;
           }
         }
-        break;
-      }
 
-      // fill the empty characters with possible_chars
-      for (let j = 0; j < 5; j++) {
-        if (result[j] === "") {
-          guess[j] = element;
+        console.log(
+          `Guessing word 2nd round #${index + 1}: `,
+          guess.join("").replace(",", "")
+        );
+
+        run_count++;
+        const response = await fetch_data(guess, seed);
+        const checking = Validation(response);
+        if (checking === true) {
+          //all characters are correct
+          return run_count;
         }
+
+        //avoid rate limit
+        await sleep(1500);
       }
-
-      console.log(
-        `Guessing word 2nd round #${index + 1}: `,
-        guess.join("").replace(",", "")
-      );
-
-      run_count++;
-      const response = await fetch_data(guess, seed);
-      const checking = Validation(response);
-      if (checking === true) {
-        //all characters are correct
-        return run_count;
-      }
-
-      //avoid rate limit
-      await sleep(1500);
     }
 
     //final check
