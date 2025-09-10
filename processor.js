@@ -4,7 +4,7 @@ import { alphabet_array } from "./util/alphabet.js";
 import { sleep } from "./util/sleep.js";
 
 //avoid TLS error for self-signed cert
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+//process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // set the result variable
 let result = ["", "", "", "", ""];
 let guess = ["", "", "", "", ""];
